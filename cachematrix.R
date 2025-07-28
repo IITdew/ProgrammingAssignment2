@@ -1,20 +1,32 @@
-## This function creates a special "matrix" object that can cache its inverse.
-
 makeCacheMatrix <- function(x = matrix()) {
-  inv <- NULL  # tu budeme uchovávať cache inverzie
+  inv <- NULL
   
   set <- function(y) {
-    x <<- y       # nastaví novú maticu
-    inv <<- NULL  # vymaže uloženú inverziu, lebo matica sa zmenila
+    x <<- y
+    inv <<- NULL
   }
   
-  get <- function() x  # vráti aktuálnu maticu
+  get <- function() x
   
-  setinverse <- function(inverse) inv <<- inverse  # uloží inverziu do cache
-  getinverse <- function() inv                       # vráti cache inverziu
+  setinverse <- function(inverse) inv <<- inverse
+  getinverse <- function() inv
   
-  # vrátime list funkcií, ktoré umožnia nastaviť a získať matica aj inverziu
   list(set = set, get = get,
        setinverse = setinverse,
        getinverse = getinverse)
+}
+
+cacheSolve <- function(x, ...) {
+  inv <- x$getinverse()
+  
+  if(!is.null(inv)) {
+    message("getting cached data")
+    return(inv)
+  }
+  
+  data <- x$get()
+  inv <- solve(data, ...)
+  x$setinverse(inv)
+  
+  inv
 }
